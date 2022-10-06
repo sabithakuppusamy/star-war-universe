@@ -15,7 +15,7 @@ const ListItems: Array<LinkItemProps> = [
   {
     name: ESidebarMenu.FAVORITES,
     icon: BsFillEmojiHeartEyesFill,
-    route: ESidebarMenu.FAVORITES,
+    route: ESidebarRoute.FAVORITES,
   },
 ];
 

@@ -2,14 +2,12 @@ import React from "react";
 import {
   Box,
   Flex,
-  IconButton,
   Image,
   Link,
   Text,
   useColorModeValue,
 } from "@chakra-ui/react";
 import { BsFillArrowRightCircleFill } from "react-icons/bs";
-import { FiHeart } from "react-icons/fi";
 import "./Card.scss";
 
 const Card = ({ character }: any) => {
@@ -76,16 +74,6 @@ const Card = ({ character }: any) => {
             <Text casing={"capitalize"}> Gender : {character.gender}</Text>
             <Text casing={"capitalize"}> Planet : {character.planet}</Text>
           </Box>
-          <IconButton
-            icon={
-              <FiHeart
-                fill={character.isFavorite ? "red" : "none"}
-                color={character.isFavorite ? "red" : "white"}
-              />
-            }
-            aria-label="Favorites"
-            isRound={true}
-          />
         </Flex>
       </Box>
     </Box>
