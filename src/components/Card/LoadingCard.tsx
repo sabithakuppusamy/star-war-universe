@@ -1,3 +1,4 @@
+import React from "react";
 import {
   SkeletonCircle,
   SkeletonText,
@@ -5,7 +6,6 @@ import {
   useColorModeValue,
   Skeleton,
 } from "@chakra-ui/react";
-import React from "react";
 
 export const LoadingCard = () => {
   return (

@@ -3,13 +3,16 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import People from "./pages/People/People";
 import Layout from "./components/Layout/Layout";
 import { Box } from "@chakra-ui/react";
-import CharacterDetails from "./pages/characterDetail.tsx/CharacterDetails";
+import CharacterDetails from "./pages/CharacterDetails/CharacterDetails";
 import { retrieveCharacterImageList } from "./helper/retrieveCharactersData";
+import { CharacterWithImage } from "./utils/interface";
 
-export const CharacterListContext = createContext<any[]>([]);
+export const CharacterListContext = createContext<CharacterWithImage[]>([]);
 
 function App() {
-  const [charListWithImage, setCharListWithImage] = useState<any[]>([]);
+  const [charListWithImage, setCharListWithImage] = useState<
+    CharacterWithImage[]
+  >([]);
 
   useEffect(() => {
     getCharactersWithImage();
@@ -19,7 +22,7 @@ function App() {
     let response = await retrieveCharacterImageList();
 
     if (response) {
-      let result = response.map((char: any) => {
+      let result = response.map((char: CharacterWithImage) => {
         return {
           ...char,
           isFavorite: false,

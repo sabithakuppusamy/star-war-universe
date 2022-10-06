@@ -1,20 +1,8 @@
-import React, { ReactNode } from "react";
-import {
-  FlexProps,
-  List,
-  Flex,
-  Icon,
-  Link,
-  useColorModeValue,
-} from "@chakra-ui/react";
+import React from "react";
+import { List, Flex, Icon, Link, useColorModeValue } from "@chakra-ui/react";
 import "./NavItem.scss";
-import { IconType } from "react-icons";
+import { NavItemProps } from "../../utils/interface";
 
-interface NavItemProps extends FlexProps {
-  icon: IconType;
-  children: ReactNode;
-  path: string;
-}
 const NavItem = ({ icon, children, path, ...rest }: NavItemProps) => {
   return (
     <List

@@ -8,11 +8,12 @@ import {
   Text,
   useColorModeValue,
 } from "@chakra-ui/react";
-import "./card.scss";
 import { BsFillArrowRightCircleFill } from "react-icons/bs";
 import { FiHeart } from "react-icons/fi";
+import "./Card.scss";
 
 const Card = ({ character }: any) => {
+  //Get ID from the character URL of SWAPI response
   let characterId =
     character?.url.split("/")[character?.url.split("/").length - 2];
   return (
@@ -59,7 +60,7 @@ const Card = ({ character }: any) => {
         borderRadius="full"
         m={"15px auto"}
         boxShadow={"lg"}
-        fit={"cover"}
+        fit={"fill"}
       />
       <Box h={"30%"} mt={4}>
         <Text
@@ -72,8 +73,8 @@ const Card = ({ character }: any) => {
         </Text>
         <Flex flexDir={"row"} justifyContent={"space-between"} my={4}>
           <Box>
-            <Text> Gender : {character.gender}</Text>
-            <Text> Planet : {character.planet}</Text>
+            <Text casing={"capitalize"}> Gender : {character.gender}</Text>
+            <Text casing={"capitalize"}> Planet : {character.planet}</Text>
           </Box>
           <IconButton
             icon={

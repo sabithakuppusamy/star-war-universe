@@ -15,11 +15,12 @@ import {
 import { FaMoon, FaSun } from "react-icons/fa";
 import MobileNav from "../MobileNav/MobileNav";
 import SidebarContent from "../SidebarContent/SidebarContent";
+import { ETheme, CHANGE_LIGHT_THEME, CHANGE_DARK_THEME } from "../../constants";
 
 export default function Layout({ children }: { children: ReactNode }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { colorMode, toggleColorMode } = useColorMode();
-  const isDarkTheme = colorMode === "dark";
+  const isDarkTheme = colorMode === ETheme.DARK;
 
   return (
     <Box minH={"100vh"} overflow="hidden">
@@ -50,9 +51,7 @@ export default function Layout({ children }: { children: ReactNode }) {
             icon={isDarkTheme ? <FaSun /> : <FaMoon />}
             aria-label={"theme"}
             isRound={true}
-            title={
-              isDarkTheme ? "Change to light theme" : "Change to dark theme"
-            }
+            title={isDarkTheme ? CHANGE_LIGHT_THEME : CHANGE_DARK_THEME}
             onClick={toggleColorMode}
           />
         </Flex>

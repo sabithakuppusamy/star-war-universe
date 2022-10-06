@@ -24,10 +24,11 @@ import "./People.scss";
 import { LoadingCard } from "../../components/Card/LoadingCard";
 import { CharacterListContext } from "../../App";
 import { useLocation } from "react-router-dom";
+import { CharacterWithImage, StarWarCharacters } from "../../utils/interface";
+import { LOAD_MORE, PLACEHOLDER_IMAGE, SCROLL_TOP } from "../../constants";
 
 const People = () => {
-  const sourceReference = useRef(axios.CancelToken.source());
-  const [characterList, setCharacterList] = useState<any[]>([]);
+  const [characterList, setCharacterList] = useState<StarWarCharacters[]>([]);
   const [isLoading, setLoading] = useState(false);
   const [greetingsText, setGreetingsText] = useState("Good Day!");
   const [page, setPage] = useState();
@@ -38,21 +39,15 @@ const People = () => {
 
   useEffect(() => {
     setLoading(true);
-    const source = sourceReference.current;
-    if (charListWithImage) {
-      getGreetingText();
-      getCharacters();
-      setLoading(false);
-    } else {
-      setLoading(true);
-    }
-
-    return () => {
-      if (source) {
-        source.cancel("People Component got unmounted");
+    setTimeout(() => {
+      if (charListWithImage) {
+        getGreetingText();
+        getCharacters();
+        setLoading(false);
+      } else {
+        setLoading(true);
       }
-      setCharacterList([]);
-    };
+    }, 1000);
   }, [charListWithImage]);
 
   const getGreetingText = (): void => {
@@ -68,7 +63,7 @@ const People = () => {
     }
   };
 
-  const getCharacters = async (searchTerm = null) => {
+  const getCharacters = async (searchTerm: string | null = null) => {
     let response;
     if (searchTerm) {
       response = await retrieveSearchedCharacters(searchTerm);
@@ -76,26 +71,26 @@ const People = () => {
       response = await retrieveCharacterList();
     }
     setPage(response.next);
-    let result = await mapCharactersWithImage(response);
-    if (filter) {
-      result = result.filter((item: any) => {
-        return item.isFavorite === true;
-      });
+    let result = await mapCharactersWithImage(response.results);
+    if (result) {
+      if (filter) {
+        result = result?.filter((item: any) => {
+          return item.isFavorite === true;
+        });
+      }
+      setCharacterList(result);
     }
-    setCharacterList(result);
   };
 
-  const mapCharactersWithImage = async (response: any) => {
+  const mapCharactersWithImage = async (response: StarWarCharacters[]) => {
     if (charListWithImage) {
-      let result = response.results.map((char: any) => {
-        let a = charListWithImage.filter((item: any) => {
+      let result = response.map((char: StarWarCharacters) => {
+        let a = charListWithImage.filter((item: CharacterWithImage) => {
           return item.name === char.name;
         });
         return {
           ...char,
-          image:
-            a[0]?.image ||
-            "https://vignette.wikia.nocookie.net/starwars/images/6/68/RattsHS.jpeg",
+          image: a[0]?.image || PLACEHOLDER_IMAGE,
           planet: a[0]?.homeworld,
           isFavorite: a[0]?.isFavorite,
         };
@@ -109,9 +104,11 @@ const People = () => {
       setIsLoadMore(true);
       const response = await getData(page);
       setPage(response.next);
-      let result = await mapCharactersWithImage(response);
-      setCharacterList([...characterList, ...result]);
-      setIsLoadMore(false);
+      let result = await mapCharactersWithImage(response.results);
+      if (result) {
+        setCharacterList([...characterList, ...result]);
+        setIsLoadMore(false);
+      }
     }
   };
 
@@ -175,7 +172,7 @@ const People = () => {
         <>
           {characterList.length === 0 && filter && (
             <Heading w={"100%"} textAlign={"center"} mt={"20vh"}>
-              This feature is coming soon...
+              Coming soon...
             </Heading>
           )}
 
@@ -196,7 +193,7 @@ const People = () => {
                   variant="outline"
                   onClick={handleLoadMore}
                 >
-                  Load more characters
+                  {LOAD_MORE}
                 </Button>
               ) : (
                 <Button
@@ -205,7 +202,7 @@ const People = () => {
                   variant="outline"
                   onClick={handleScrollTop}
                 >
-                  Scroll to Top
+                  {SCROLL_TOP}
                 </Button>
               )}
             </Flex>

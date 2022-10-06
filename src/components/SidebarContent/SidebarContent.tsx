@@ -1,33 +1,23 @@
 import React from "react";
-import {
-  BoxProps,
-  useColorModeValue,
-  Flex,
-  CloseButton,
-  Box,
-} from "@chakra-ui/react";
+import { useColorModeValue, Flex, CloseButton, Box } from "@chakra-ui/react";
 import NavItem from "../NavItem/NavItem";
-import { IconType } from "react-icons";
 import { FaUserAlt } from "react-icons/fa";
 import { BsFillEmojiHeartEyesFill } from "react-icons/bs";
+import { LinkItemProps, SidebarProps } from "../../utils/interface";
+import { ESidebarMenu, ESidebarRoute } from "../../constants";
 
-interface LinkItemProps {
-  name: string;
-  icon: IconType;
-  route: string;
-}
 const ListItems: Array<LinkItemProps> = [
-  { name: "People", icon: FaUserAlt, route: "/characters" },
   {
-    name: "Favorites",
+    name: ESidebarMenu.CHARACTERS,
+    icon: FaUserAlt,
+    route: ESidebarRoute.CHARACTERS,
+  },
+  {
+    name: ESidebarMenu.FAVORITES,
     icon: BsFillEmojiHeartEyesFill,
-    route: "/characters?filter=favorites",
+    route: ESidebarMenu.FAVORITES,
   },
 ];
-
-interface SidebarProps extends BoxProps {
-  onClose: () => void;
-}
 
 const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
   return (

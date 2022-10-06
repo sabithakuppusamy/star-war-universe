@@ -11,26 +11,26 @@ import {
 import { retrieveCharacterDetails } from "../../helper/retrieveCharactersData";
 import { CharacterListContext } from "../../App";
 import { GiHastyGrave, GiNewBorn, GiWorld } from "react-icons/gi";
+import { StarWarCharacters } from "../../utils/interface";
+import { PLACEHOLDER_IMAGE } from "../../constants";
 
 const CharacterDetails = () => {
   const location = useLocation();
   const profileId = location.pathname.split("/").pop();
-  const [charDetails, setCharDetails] = useState<any[]>([]);
+  const [charDetails, setCharDetails] = useState<StarWarCharacters[]>([]);
   const [charImage, setCharImage] = useState("");
   const [charWiki, setCharWiki] = useState("");
   const [charPlanet, setCharPlanet] = useState("");
-  const [charDied, setCharDied] = useState("");
+  const [charDied, setCharDied] = useState<string | undefined>("");
   const [charSpecies, setCharSpecies] = useState("");
   const [charCybernatics, setCharCybernatics] = useState("");
-  const [charDiedLocation, setDiedLocation] = useState("");
+  const [charDiedLocation, setDiedLocation] = useState<string | undefined>("");
   const [charAffiliations, setCharAffliations] = useState("");
   const [charApprentices, setCharApprentices] = useState("");
   const [charMasters, setCharMasters] = useState("");
-  const [isLoading, setLoading] = useState(false);
   const charListWithImage = useContext(CharacterListContext);
 
   useEffect(() => {
-    setLoading(true);
     getCharacterDetails();
   }, [charListWithImage]);
 
@@ -40,7 +40,6 @@ const CharacterDetails = () => {
       return char.name === data.name;
     });
     if (imageData.length > 0) {
-      setLoading(false);
       setCharImage(imageData[0].image);
       setCharWiki(imageData[0].wiki);
       setCharPlanet(imageData[0].homeworld);
@@ -53,8 +52,6 @@ const CharacterDetails = () => {
       setCharAffliations(imageData[0].affiliations.toString());
       setCharApprentices(imageData[0].apprentices.toString());
       setCharMasters(imageData[0].masters.toString());
-    } else {
-      setLoading(false);
     }
     setCharDetails([data]);
   };
@@ -74,10 +71,7 @@ const CharacterDetails = () => {
           Star Wars Character Profile
         </Text>
         <Image
-          src={
-            charImage ||
-            "https://vignette.wikia.nocookie.net/starwars/images/6/68/RattsHS.jpeg"
-          }
+          src={charImage || PLACEHOLDER_IMAGE}
           boxSize="150px"
           alt="stock image"
           borderRadius="full"
@@ -128,13 +122,13 @@ const CharacterDetails = () => {
           About
         </Text>
         <Text fontSize={"md"}>
-          {`${
-            charDetails[0]?.name
-          } is one of the characters from Star wars. Born on ${
-            charDetails[0]?.birth_year
-          }. Died ${
-            charDied ? `in ${charDied}` : ` `
-          }at ${charDiedLocation}. Do you want to know more about ${
+          {`${charDetails[0]?.name} is one of the characters from Star wars. ${
+            charDetails[0]?.birth_year !== "unknown"
+              ? `Born on ${charDetails[0]?.birth_year}.`
+              : ` `
+          } ${charDied ? ` Died in ${charDied}` : ` `} ${
+            charDiedLocation ? `at ${charDiedLocation}.` : ``
+          } Do you want to know more about ${
             charDetails[0]?.name
           }? Please follow this `}
           <Link color={"linkedin.500"} href={charWiki} target={"_blank"}>
@@ -156,34 +150,34 @@ const CharacterDetails = () => {
             >
               Physical Description
             </Text>
-            <Text>
+            <Text casing={"capitalize"}>
               <strong>Species:</strong> {charSpecies}
             </Text>
-            <Text>
+            <Text casing={"capitalize"}>
               <strong>Gender: </strong>
               {charDetails[0]?.gender}
             </Text>
-            <Text>
+            <Text casing={"capitalize"}>
               <strong>Height: </strong>
               {`${charDetails[0]?.height} centimeters`}
             </Text>
-            <Text>
+            <Text casing={"capitalize"}>
               <strong>Mass: </strong>
               {`${charDetails[0]?.mass} kilograms`}
             </Text>
-            <Text>
+            <Text casing={"capitalize"}>
               <strong>Hair Color: </strong>
               {charDetails[0]?.hair_color}
             </Text>
-            <Text>
+            <Text casing={"capitalize"}>
               <strong>Skin Color: </strong>
               {charDetails[0]?.skin_color}
             </Text>
-            <Text>
+            <Text casing={"capitalize"}>
               <strong>Eye Color: </strong>
               {charDetails[0]?.eye_color}
             </Text>
-            <Text>
+            <Text casing={"capitalize"}>
               <strong>Cybernatics: </strong>
               {charCybernatics || "n/a"}
             </Text>
