@@ -28,6 +28,7 @@ import { CharacterWithImage, StarWarCharacters } from "../../utils/interface";
 import { LOAD_MORE, PLACEHOLDER_IMAGE, SCROLL_TOP } from "../../constants";
 
 const People = () => {
+  const sourceReference = useRef(axios.CancelToken.source());
   const [characterList, setCharacterList] = useState<StarWarCharacters[]>([]);
   const [isLoading, setLoading] = useState(false);
   const [greetingsText, setGreetingsText] = useState("Good Day!");
@@ -39,15 +40,21 @@ const People = () => {
 
   useEffect(() => {
     setLoading(true);
-    setTimeout(() => {
-      if (charListWithImage) {
-        getGreetingText();
-        getCharacters();
-        setLoading(false);
-      } else {
-        setLoading(true);
+    const source = sourceReference.current;
+     if (charListWithImage) {
+       getGreetingText();
+       getCharacters();
+       setLoading(false);
+     } else {
+       setLoading(true);
+     }
+
+    return () => {
+      if (source) {
+        source.cancel("People Component got unmounted");
       }
-    }, 1000);
+      setCharacterList([]);
+    };
   }, [charListWithImage]);
 
   const getGreetingText = (): void => {
