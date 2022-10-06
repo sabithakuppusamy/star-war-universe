@@ -1,0 +1,16 @@
+.sw-search{
+    @mixin linear-gradient-border{
+    border-image:  linear-gradient(45deg,
+        rgb(248, 93, 111),
+        orange,
+        #ffc800,
+        rgb(248, 93, 111),
+        #ffc800,
+        orange,
+        rgb(248, 93, 111)) 30;
+    }
+    border-bottom: 2px solid #f6b73c;
+    @include linear-gradient-border()
+
+}
+

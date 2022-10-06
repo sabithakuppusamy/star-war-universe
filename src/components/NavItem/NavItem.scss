@@ -1,0 +1,12 @@
+.side-bar-list{
+    &:hover{
+        background: -webkit-linear-gradient(
+        45deg,
+        rgb(248, 93, 111),
+        orange,
+        orange,
+        rgb(248, 93, 111)
+        );
+        background-size: 400% 400%;
+    }
+}

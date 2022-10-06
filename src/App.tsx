@@ -1,25 +1,49 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { createContext, useEffect, useState } from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import People from "./pages/People/People";
+import Layout from "./components/Layout/Layout";
+import { Box } from "@chakra-ui/react";
+import CharacterDetails from "./pages/characterDetail.tsx/CharacterDetails";
+import { retrieveCharacterImageList } from "./helper/retrieveCharactersData";
+
+export const CharacterListContext = createContext<any[]>([]);
 
 function App() {
+  const [charListWithImage, setCharListWithImage] = useState<any[]>([]);
+
+  useEffect(() => {
+    getCharactersWithImage();
+  }, []);
+
+  const getCharactersWithImage = async () => {
+    let response = await retrieveCharacterImageList();
+
+    if (response) {
+      let result = response.map((char: any) => {
+        return {
+          ...char,
+          isFavorite: false,
+        };
+      });
+      setCharListWithImage(result);
+    }
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <CharacterListContext.Provider value={charListWithImage}>
+      <Layout>
+        <Box>
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<People />}></Route>
+              <Route index element={<People />} />
+              <Route path="/characters" element={<People />} />
+              <Route path="/characters/:id" element={<CharacterDetails />} />
+            </Routes>
+          </BrowserRouter>
+        </Box>
+      </Layout>
+    </CharacterListContext.Provider>
   );
 }
 
