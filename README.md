@@ -11,7 +11,7 @@ Tech stack:
 4. TYPESCRIPT
 5. State management - usecontext hook
 
-##DEMO
+## DEMO
 
 https://star-war-universe.vercel.app/
 
