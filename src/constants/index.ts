@@ -1,4 +1,4 @@
-export const BASE_URL = "http://swapi.dev/api";
+export const BASE_URL = "https://swapi.dev/api";
 export const PEOPLE_URL = `${BASE_URL}/people`;
 export const PEOPLE_SEARCH_URL = `${PEOPLE_URL}/?search=`;
 export const CHARACTER_IMAGE_URL =
