@@ -11,6 +11,10 @@ Tech stack:
 4. TYPESCRIPT
 5. State management - usecontext hook
 
+##DEMO
+
+https://star-war-universe.vercel.app/
+
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
