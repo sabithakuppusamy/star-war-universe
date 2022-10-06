@@ -41,14 +41,12 @@ const People = () => {
   useEffect(() => {
     setLoading(true);
     const source = sourceReference.current;
-     if (charListWithImage) {
-       getGreetingText();
-       getCharacters();
-       setLoading(false);
-     } else {
-       setLoading(true);
-     }
-
+    if (charListWithImage) {
+      getGreetingText();
+      getCharacters();
+    } else {
+      setLoading(true);
+    }
     return () => {
       if (source) {
         source.cancel("People Component got unmounted");
@@ -86,6 +84,7 @@ const People = () => {
         });
       }
       setCharacterList(result);
+      setLoading(false);
     }
   };
 
