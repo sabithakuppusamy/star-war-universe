@@ -8,7 +8,7 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import { BsFillArrowRightCircleFill } from "react-icons/bs";
-import "./Card.scss";
+import "./card.scss";
 
 const Card = ({ character }: any) => {
   //Get ID from the character URL of SWAPI response
