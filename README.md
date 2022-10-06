@@ -1,4 +1,16 @@
-# Getting Started with Create React App
+# STAR WARS UNIVERSE
+
+API - https://swapi.dev/api
+Swapi API doesn't have image so I am using https://akabab.github.io/starwars-api/api/all.json for image.
+
+Tech stack:
+
+1. REACT
+2. CHAKRA UI
+3. REACT ICONS
+4. TYPESCRIPT
+5. State management - usecontext hook
+
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
