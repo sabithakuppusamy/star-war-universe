@@ -18,7 +18,7 @@ import {
   retrieveCharacterList,
   retrieveSearchedCharacters,
 } from "../../helper/retrieveCharactersData";
-import getData from "../../utils/api";
+import { getData } from "../../utils/api";
 import { FiSearch } from "react-icons/fi";
 import "./People.scss";
 import { LoadingCard } from "../../components/Card/LoadingCard";

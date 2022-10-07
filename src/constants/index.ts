@@ -14,6 +14,8 @@ export const PLACEHOLDER_IMAGE =
   "https://vignette.wikia.nocookie.net/starwars/images/6/68/RattsHS.jpeg";
 export const LOAD_MORE = "Load more";
 export const SCROLL_TOP = "Scroll to Top";
+export const FILMS = "films";
+export const STARSHIPS = "starships";
 
 //Enum
 export enum ETheme {

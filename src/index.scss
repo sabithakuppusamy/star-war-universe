@@ -12,8 +12,8 @@ code {
     monospace;
 }
 
-.greetings-text{
-   background: -webkit-linear-gradient(
+.charDetails-text{
+ background: -webkit-linear-gradient(
     -45deg,
     rgb(248, 93, 111),
     orange,
@@ -29,6 +29,10 @@ code {
   background-clip: text;
   -webkit-text-fill-color: transparent;
   font-weight: 400;
+}
+
+.greetings-text{
+  @extend .charDetails-text;
   animation: gradientTextAnimation 16s ease-in-out alternate infinite;
 }
 

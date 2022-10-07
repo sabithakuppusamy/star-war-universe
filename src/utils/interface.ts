@@ -49,4 +49,6 @@ export interface StarWarCharacters {
   mass: string;
   name: string;
   skin_color: string;
+  films: string[];
+  starships: string[];
 }

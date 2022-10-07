@@ -7,12 +7,18 @@ import {
   Flex,
   Link,
   useColorModeValue,
+  Tag,
+  Wrap,
+  WrapItem,
 } from "@chakra-ui/react";
-import { retrieveCharacterDetails } from "../../helper/retrieveCharactersData";
+import {
+  getFilmsAndStarshipData,
+  retrieveCharacterDetails,
+} from "../../helper/retrieveCharactersData";
 import { CharacterListContext } from "../../App";
 import { GiHastyGrave, GiNewBorn, GiWorld } from "react-icons/gi";
 import { StarWarCharacters } from "../../utils/interface";
-import { PLACEHOLDER_IMAGE } from "../../constants";
+import { FILMS, PLACEHOLDER_IMAGE, STARSHIPS } from "../../constants";
 
 const CharacterDetails = () => {
   const location = useLocation();
@@ -23,37 +29,75 @@ const CharacterDetails = () => {
   const [charPlanet, setCharPlanet] = useState("");
   const [charDied, setCharDied] = useState<string | undefined>("");
   const [charSpecies, setCharSpecies] = useState("");
-  const [charCybernatics, setCharCybernatics] = useState("");
+  const [charCybernetics, setcharCybernetics] = useState("");
   const [charDiedLocation, setDiedLocation] = useState<string | undefined>("");
   const [charAffiliations, setCharAffliations] = useState("");
   const [charApprentices, setCharApprentices] = useState("");
   const [charMasters, setCharMasters] = useState("");
   const charListWithImage = useContext(CharacterListContext);
+  const [charFilms, setCharFilms] = useState<string[]>([]);
+  const [charStarships, setCharStarships] = useState<string[]>([]);
 
   useEffect(() => {
-    getCharacterDetails();
+    if (charListWithImage) {
+      getCharacterDetails();
+    }
   }, [charListWithImage]);
+
+  const extractFilmsOrStarship = (
+    groupResponseData: any,
+    type: string
+  ): string[] => {
+    let result: string[] = [];
+    groupResponseData.forEach((response: any) => {
+      result.push(type === FILMS ? response.data.title : response.data.name);
+    });
+    return result;
+  };
+
+  const setCharacterFilmData = async (data: string[]) => {
+    const filmsDataGroupResponse = await getFilmsAndStarshipData(data);
+
+    if (filmsDataGroupResponse) {
+      setCharFilms(extractFilmsOrStarship(filmsDataGroupResponse, FILMS));
+    }
+  };
+
+  const setCharacterStarshipData = async (data: any) => {
+    let charactersDataGroupResponse = await getFilmsAndStarshipData(data);
+
+    if (charactersDataGroupResponse) {
+      setCharStarships(
+        extractFilmsOrStarship(charactersDataGroupResponse, STARSHIPS)
+      );
+    }
+  };
 
   const getCharacterDetails = async () => {
     const data = await retrieveCharacterDetails(profileId);
-    let imageData = charListWithImage.filter((char: any) => {
-      return char.name === data.name;
-    });
-    if (imageData.length > 0) {
-      setCharImage(imageData[0].image);
-      setCharWiki(imageData[0].wiki);
-      setCharPlanet(imageData[0].homeworld);
-      setCharDied(imageData[0].died || imageData[0].dateDestroyed);
-      setDiedLocation(
-        imageData[0].diedLocation || imageData[0].destroyedLocation
-      );
-      setCharSpecies(imageData[0].species);
-      setCharCybernatics(imageData[0].cybernetics);
-      setCharAffliations(imageData[0].affiliations.toString());
-      setCharApprentices(imageData[0].apprentices.toString());
-      setCharMasters(imageData[0].masters.toString());
+    if (data) {
+      if (charFilms.length === 0) setCharacterFilmData(data.films);
+      if (charStarships.length === 0) setCharacterStarshipData(data.starships);
+
+      let imageData = charListWithImage.filter((char: any) => {
+        return char.name === data.name;
+      });
+      if (imageData.length > 0) {
+        setCharImage(imageData[0].image);
+        setCharWiki(imageData[0].wiki);
+        setCharPlanet(imageData[0].homeworld);
+        setCharDied(imageData[0].died || imageData[0].dateDestroyed);
+        setDiedLocation(
+          imageData[0].diedLocation || imageData[0].destroyedLocation
+        );
+        setCharSpecies(imageData[0].species);
+        setcharCybernetics(imageData[0].cybernetics);
+        setCharAffliations(imageData[0].affiliations?.toString());
+        setCharApprentices(imageData[0].apprentices?.toString());
+        setCharMasters(imageData[0].masters?.toString());
+      }
+      setCharDetails([data]);
     }
-    setCharDetails([data]);
   };
 
   return (
@@ -67,7 +111,7 @@ const CharacterDetails = () => {
         borderRadius={10}
         className="shimmering-gradient"
       >
-        <Text fontSize={"lg"} fontWeight={"medium"} textAlign="center" mt={4}>
+        <Text fontSize={"lg"} fontWeight={"thin"} textAlign="center" mt={4}>
           Star Wars Character Profile
         </Text>
         <Image
@@ -85,11 +129,11 @@ const CharacterDetails = () => {
         fontWeight={"semibold"}
         fontSize={"2xl"}
         textAlign={"center"}
-        className="greetings-text"
+        className="charDetails-text"
       >
         {charDetails[0]?.name}
       </Text>
-      <Flex gap={8} justifyContent="center" alignItems="center" mt={4}>
+      <Flex gap={8} justifyContent="center" alignItems="center">
         {charPlanet && (
           <Flex justifyContent={"center"} alignItems={"center"} gap={2}>
             <GiWorld />
@@ -111,41 +155,101 @@ const CharacterDetails = () => {
         )}
       </Flex>
 
-      <Flex my={4} mx={{ base: "4", md: "16" }} flexDir="column">
-        <Text
-          fontWeight={"semibold"}
-          fontSize={"xl"}
-          textAlign={"left"}
-          className="greetings-text"
-          mb={2}
-        >
-          About
-        </Text>
-        <Text fontSize={"md"}>
-          {`${charDetails[0]?.name} is one of the characters from Star wars. ${
-            charDetails[0]?.birth_year !== "unknown"
-              ? `Born on ${charDetails[0]?.birth_year}.`
-              : ` `
-          } ${charDied ? ` Died in ${charDied}` : ` `} ${
-            charDiedLocation ? `at ${charDiedLocation}.` : ``
-          } Do you want to know more about ${
-            charDetails[0]?.name
-          }? Please follow this `}
-          <Link color={"linkedin.500"} href={charWiki} target={"_blank"}>
-            link.
-          </Link>
-        </Text>
+      <Flex mx={{ base: "4", md: "16" }} flexDir="column" gap={"6"}>
+        <Flex flexDir={"column"}>
+          <Text
+            fontWeight={"semibold"}
+            fontSize={"xl"}
+            textAlign={"left"}
+            className="charDetails-text"
+            mb={2}
+          >
+            About
+          </Text>
+          <Text fontSize={"md"}>
+            {`${
+              charDetails[0]?.name
+            } is one of the characters from Star wars. ${
+              charDetails[0]?.birth_year !== "unknown"
+                ? `Born on ${charDetails[0]?.birth_year}.`
+                : ` `
+            } ${charDied ? ` Died in ${charDied}` : ` `} ${
+              charDiedLocation ? `at ${charDiedLocation}.` : ``
+            } Do you want to know more about ${
+              charDetails[0]?.name
+            }? Please follow this `}
+            <Link color={"linkedin.500"} href={charWiki} target={"_blank"}>
+              link.
+            </Link>
+          </Text>
+        </Flex>
+
+        <Flex flexDir={"column"}>
+          <Text
+            fontWeight={"semibold"}
+            fontSize={"xl"}
+            textAlign={"left"}
+            className="charDetails-text"
+            mb={2}
+          >
+            Films
+          </Text>
+          <Wrap spacing={4}>
+            {charFilms.length === 0 && <Text>No data</Text>}
+            {charFilms.map((film: string) => (
+              <WrapItem key={film}>
+                <Tag
+                  size={"lg"}
+                  key={film}
+                  colorScheme="yellow"
+                  p={2}
+                  w={"auto"}
+                >
+                  {film}
+                </Tag>
+              </WrapItem>
+            ))}
+          </Wrap>
+        </Flex>
+
+        <Flex flexDir={"column"}>
+          <Text
+            fontWeight={"semibold"}
+            fontSize={"xl"}
+            textAlign={"left"}
+            className="charDetails-text"
+            mb={2}
+          >
+            Starships
+          </Text>
+          <Wrap spacing={4}>
+            {charStarships.length === 0 && <Text>No data</Text>}
+            {charStarships.map((starship: string) => (
+              <WrapItem key={starship}>
+                <Tag
+                  size={"lg"}
+                  key={starship}
+                  colorScheme="yellow"
+                  p={2}
+                  w={"auto"}
+                >
+                  {starship}
+                </Tag>
+              </WrapItem>
+            ))}
+          </Wrap>
+        </Flex>
+
         <Flex
           flexDir={{ base: "column", md: "row" }}
           justifyContent={"space-around"}
-          my={4}
         >
           <Flex flexDir={"column"}>
             <Text
               fontWeight={"semibold"}
               fontSize={"xl"}
               textAlign={"left"}
-              className="greetings-text"
+              className="charDetails-text"
               my={2}
             >
               Physical Description
@@ -178,8 +282,8 @@ const CharacterDetails = () => {
               {charDetails[0]?.eye_color}
             </Text>
             <Text casing={"capitalize"}>
-              <strong>Cybernatics: </strong>
-              {charCybernatics || "n/a"}
+              <strong>Cybernetics: </strong>
+              {charCybernetics || "n/a"}
             </Text>
           </Flex>
           <Flex flexDir={"column"} maxW={"60vh"}>
@@ -187,20 +291,20 @@ const CharacterDetails = () => {
               fontWeight={"semibold"}
               fontSize={"xl"}
               textAlign={"left"}
-              className="greetings-text"
+              className="charDetails-text"
               my={2}
             >
               Chronological and political information
             </Text>
 
-            <Text>
+            <Text casing={"capitalize"}>
               <strong>Affiliations: </strong>
               {charAffiliations}
             </Text>
-            <Text>
+            <Text casing={"capitalize"}>
               <strong>Apprentices:</strong> {charApprentices || "n/a"}
             </Text>
-            <Text>
+            <Text casing={"capitalize"}>
               <strong>Masters:</strong> {charMasters || "n/a"}
             </Text>
           </Flex>
