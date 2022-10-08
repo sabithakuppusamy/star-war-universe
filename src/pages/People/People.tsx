@@ -44,13 +44,18 @@ const People = () => {
   const params = new URLSearchParams(useLocation().search);
   const filter = params.get("filter");
   const [noLoadMoreData, setNoLoadMoreData] = useState(false);
+  const [searchWord, setSearchWord] = useState("");
 
   useEffect(() => {
     setLoading(true);
     const source = sourceReference.current;
     if (charListWithImage) {
       getGreetingText();
-      getCharacters();
+      if (searchWord) {
+        getCharacters(searchWord);
+      } else {
+        getCharacters();
+      }
     } else {
       setLoading(true);
     }
@@ -131,6 +136,8 @@ const People = () => {
         }
         setIsLoadMore(false);
       }
+    } else {
+      setNoLoadMoreData(true);
     }
   };
 
@@ -140,6 +147,7 @@ const People = () => {
 
   const handleOnInput = (event: any) => {
     setTimeout(() => {
+      setSearchWord(event.target.value);
       getCharacters(event.target.value);
     }, 1000);
   };
@@ -161,6 +169,7 @@ const People = () => {
                 variant="flushed"
                 className="sw-search"
                 onKeyDown={handleOnInput}
+                defaultValue={searchWord}
               />
               <InputRightElement children={<FiSearch />} />
             </InputGroup>
