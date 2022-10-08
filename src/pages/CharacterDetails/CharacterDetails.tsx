@@ -26,7 +26,7 @@ import {
   FILMS,
   PLACEHOLDER_IMAGE,
   REMOVE_FROM_FAVORITES,
-  STARSHIPS,
+  STAR_SHIPS,
 } from "../../constants";
 import { getLocalStorageItem, setLocalStorageItem } from "../../utils/common";
 import { FiHeart } from "react-icons/fi";
@@ -42,14 +42,14 @@ const CharacterDetails = () => {
   const [charPlanet, setCharPlanet] = useState("");
   const [charDied, setCharDied] = useState<string | undefined>("");
   const [charSpecies, setCharSpecies] = useState("");
-  const [charCybernetics, setcharCybernetics] = useState("");
+  const [charCybernetics, setCharCybernetics] = useState("");
   const [charDiedLocation, setDiedLocation] = useState<string | undefined>("");
-  const [charAffiliations, setCharAffliations] = useState("");
+  const [charAffiliations, setCharAffiliations] = useState("");
   const [charApprentices, setCharApprentices] = useState("");
   const [charMasters, setCharMasters] = useState("");
   const charListWithImage = useContext(CharacterListContext);
   const [charFilms, setCharFilms] = useState<string[]>([]);
-  const [charStarships, setCharStarships] = useState<string[]>([]);
+  const [charStarShips, setCharStarShips] = useState<string[]>([]);
   const [isCharFavorite, setIsCharFavorite] = useState(false);
 
   useEffect(() => {
@@ -102,8 +102,8 @@ const CharacterDetails = () => {
     let charactersDataGroupResponse = await getFilmsAndStarshipData(data);
 
     if (charactersDataGroupResponse) {
-      setCharStarships(
-        extractFilmsOrStarship(charactersDataGroupResponse, STARSHIPS)
+      setCharStarShips(
+        extractFilmsOrStarship(charactersDataGroupResponse, STAR_SHIPS)
       );
     }
   };
@@ -112,7 +112,7 @@ const CharacterDetails = () => {
     const data = await retrieveCharacterDetails(profileId);
     if (data) {
       if (charFilms.length === 0) setCharacterFilmData(data.films);
-      if (charStarships.length === 0) setCharacterStarshipData(data.starships);
+      if (charStarShips.length === 0) setCharacterStarshipData(data.starships);
 
       let imageData = charListWithImage.filter((char: any) => {
         return char.name === data.name;
@@ -126,8 +126,8 @@ const CharacterDetails = () => {
           imageData[0].diedLocation || imageData[0].destroyedLocation
         );
         setCharSpecies(imageData[0].species);
-        setcharCybernetics(imageData[0].cybernetics);
-        setCharAffliations(imageData[0].affiliations?.toString());
+        setCharCybernetics(imageData[0].cybernetics);
+        setCharAffiliations(imageData[0].affiliations?.toString());
         setCharApprentices(imageData[0].apprentices?.toString());
         setCharMasters(imageData[0].masters?.toString());
       }
@@ -192,15 +192,22 @@ const CharacterDetails = () => {
       >
         <IconButton
           position={"absolute"}
-          top={4}
-          left={4}
+          top={0}
+          left={0}
           isRound={true}
-          size={"lg"}
+          variant={"ghost"}
+          size={{ base: "md", md: "lg" }}
           icon={<FaArrowLeft />}
           onClick={goBack}
           aria-label={"back-button"}
         />
-        <Text fontSize={"lg"} fontWeight={"thin"} textAlign="center" mt={4}>
+
+        <Text
+          fontSize={{ base: "md", md: "lg" }}
+          fontWeight={"thin"}
+          textAlign="center"
+          mt={{ base: 6, md: 4 }}
+        >
           Star Wars Character Profile
         </Text>
         <Box position={"absolute"} right={4} bottom={4}>
@@ -223,6 +230,7 @@ const CharacterDetails = () => {
               variant={"outline"}
               size="sm"
               fontWeight={"medium"}
+              display={{ base: "none", md: "flex" }}
               onClick={handleAddFavorites}
             >
               {ADD_TO_FAVORITES}
@@ -235,21 +243,23 @@ const CharacterDetails = () => {
           boxSize="150px"
           alt="Profile"
           borderRadius="full"
-          m={"15px auto"}
+          m={"0 auto"}
           boxShadow={"lg"}
           fit={"fill"}
+          mt={{ base:4, md:8}}
         />
       </Box>
 
       <Text
         fontWeight={"semibold"}
         fontSize={"2xl"}
+        mt={6}
         textAlign={"center"}
         className="charDetails-text"
       >
         {charDetails[0]?.name}
       </Text>
-      <Flex gap={8} justifyContent="center" alignItems="center">
+      <Flex gap={8} justifyContent="center" alignItems="center" mb={6}>
         {charPlanet && (
           <Flex justifyContent={"center"} alignItems={"center"} gap={2}>
             <GiWorld />
@@ -339,8 +349,8 @@ const CharacterDetails = () => {
             Starships
           </Text>
           <Wrap spacing={4}>
-            {charStarships.length === 0 && <Text>No data</Text>}
-            {charStarships.map((starship: string) => (
+            {charStarShips.length === 0 && <Text>No data</Text>}
+            {charStarShips.map((starship: string) => (
               <WrapItem key={starship}>
                 <Tag
                   size={"lg"}
