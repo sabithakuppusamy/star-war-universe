@@ -133,6 +133,7 @@ const Card = ({ character, characterList, setCharacterList }: any) => {
             alignSelf={"flex-end"}
             size="lg"
             fontWeight={"normal"}
+            fontSize={14}
             onClick={handleRemoveFavorites}
             onDoubleClick={handleRemoveFavorites}
           >
@@ -145,6 +146,7 @@ const Card = ({ character, characterList, setCharacterList }: any) => {
             alignSelf={"flex-end"}
             size="lg"
             fontWeight={"normal"}
+            fontSize={14}
             onClick={handleAddFavorites}
             onDoubleClick={handleAddFavorites}
           >
