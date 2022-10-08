@@ -11,6 +11,7 @@ import {
   InputGroup,
   Box,
   InputRightElement,
+  IconButton,
 } from "@chakra-ui/react";
 import Card from "../../components/Card/Card";
 import axios from "axios";
@@ -32,6 +33,7 @@ import {
   PLACEHOLDER_SEARCH_TEXT,
   SCROLL_TOP,
 } from "../../constants";
+import { BsArrowBarUp } from "react-icons/bs";
 
 const People = () => {
   const sourceReference = useRef(axios.CancelToken.source());
@@ -142,7 +144,7 @@ const People = () => {
   };
 
   const handleScrollTop = () => {
-    window.scrollTo(0, 0);
+    window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
   };
 
   const handleOnInput = (event: any) => {
@@ -224,8 +226,13 @@ const People = () => {
             {isLoadMore && <LoadingCard />}
           </Wrap>
           {characterList.length !== 0 && !noLoadMoreData && (
-            <Flex justifyContent={"center"} alignItems={"center"} mb={8}>
-              {characterList.length < 82 ? (
+            <Flex
+              justifyContent={"center"}
+              alignItems={"center"}
+              mb={8}
+              position={"relative"}
+            >
+              {characterList.length < 82 && (
                 <Button
                   fontWeight={"thin"}
                   colorScheme="orange"
@@ -234,15 +241,19 @@ const People = () => {
                 >
                   {LOAD_MORE}
                 </Button>
-              ) : (
-                <Button
-                  fontWeight={"thin"}
-                  colorScheme="yellow"
-                  variant="outline"
+              )}
+              {window.scrollY > 20 && (
+                <IconButton
+                  icon={<BsArrowBarUp />}
+                  aria-label={"scroll-to-top"}
+                  size={"lg"}
+                  position={"fixed"}
+                  right={8}
+                  bottom={8}
+                  isRound={true}
+                  colorScheme="orange"
                   onClick={handleScrollTop}
-                >
-                  {SCROLL_TOP}
-                </Button>
+                />
               )}
             </Flex>
           )}
