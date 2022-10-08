@@ -114,7 +114,7 @@ const Card = ({ character, characterList, setCharacterList }: any) => {
           justifyContent={"space-between"}
           m={"auto 0"}
         >
-          <BsFillArrowRightCircleFill size={36} />
+          <BsFillArrowRightCircleFill size={"30"} />
           <Text
             mt={4}
             fontSize={20}
