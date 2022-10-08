@@ -50,7 +50,7 @@ const CharacterDetails = () => {
   const charListWithImage = useContext(CharacterListContext);
   const [charFilms, setCharFilms] = useState<string[]>([]);
   const [charStarships, setCharStarships] = useState<string[]>([]);
-  const [isFavorite, setIsFavorite] = useState(false);
+  const [isCharFavorite, setIsCharFavorite] = useState(false);
 
   useEffect(() => {
     if (charListWithImage) {
@@ -76,7 +76,7 @@ const CharacterDetails = () => {
 
   const getCharFavDetails = (): void => {
     let favList = getFavListFromLocal();
-    setIsFavorite(favList[0]?.isFavorite);
+    setIsCharFavorite(favList[0]?.isFavorite);
   };
 
   const extractFilmsOrStarship = (
@@ -156,17 +156,22 @@ const CharacterDetails = () => {
         });
       }
       setLocalStorageItem(FAV_KEY, JSON.stringify(favList));
+      setIsCharFavorite(isFavorite);
+    } else {
+      setLocalStorageItem(
+        FAV_KEY,
+        JSON.stringify([{ name: charDetails[0]?.name, isFavorite: isFavorite }])
+      );
+      setIsCharFavorite(isFavorite);
     }
   };
 
   const handleAddFavorites = (_event: any) => {
     setOrRemoveFavorite(true);
-    setIsFavorite(true);
   };
 
   const handleRemoveFavorites = (_event: any) => {
     setOrRemoveFavorite(false);
-    setIsFavorite(false);
   };
 
   const goBack = (_event: any) => {
@@ -199,7 +204,7 @@ const CharacterDetails = () => {
           Star Wars Character Profile
         </Text>
         <Box position={"absolute"} right={4} bottom={4}>
-          {isFavorite ? (
+          {isCharFavorite ? (
             <Button
               alignSelf={"flex-end"}
               colorScheme="yellow"

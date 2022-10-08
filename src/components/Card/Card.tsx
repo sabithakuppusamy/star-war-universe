@@ -52,6 +52,11 @@ const Card = ({ character, characterList, setCharacterList }: any) => {
       }
       setLocalStorageItem(FAV_KEY, JSON.stringify(favList));
       setCharacterList(updateCharacterList(isFavorite));
+    } else {
+      setLocalStorageItem(
+        FAV_KEY,
+        JSON.stringify([{ name: character.name, isFavorite: isFavorite }])
+      );
     }
   };
 
