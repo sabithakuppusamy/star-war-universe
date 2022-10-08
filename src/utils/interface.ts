@@ -51,4 +51,10 @@ export interface StarWarCharacters {
   skin_color: string;
   films: string[];
   starships: string[];
+  isFavorite?: boolean;
+}
+
+export interface CharacterFavorites {
+  name: string;
+  isFavorite: boolean;
 }

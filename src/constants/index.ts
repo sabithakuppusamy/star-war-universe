@@ -16,6 +16,12 @@ export const LOAD_MORE = "Load more";
 export const SCROLL_TOP = "Scroll to Top";
 export const FILMS = "films";
 export const STARSHIPS = "starships";
+export const PLACEHOLDER_SEARCH_TEXT = "Search character name";
+export const FAV_KEY = "Favorites";
+export const ADD_TO_FAVORITES = "Add to Favorites";
+export const REMOVE_FROM_FAVORITES = "Remove from Favorites";
+export const NO_FAV_TEXT =
+  "Once you've added something to Favorites, it will appear here.";
 
 //Enum
 export enum ETheme {

@@ -5,29 +5,52 @@ import Layout from "./components/Layout/Layout";
 import { Box } from "@chakra-ui/react";
 import CharacterDetails from "./pages/CharacterDetails/CharacterDetails";
 import { retrieveCharacterImageList } from "./helper/retrieveCharactersData";
-import { CharacterWithImage } from "./utils/interface";
+import { FAV_KEY } from "./constants";
+import { CharacterFavorites } from "./utils/interface";
+import { getLocalStorageItem } from "./utils/common";
 
-export const CharacterListContext = createContext<CharacterWithImage[]>([]);
+export const CharacterListContext = createContext<any[]>([]);
 
 function App() {
-  const [charListWithImage, setCharListWithImage] = useState<
-    CharacterWithImage[]
-  >([]);
+  const [charListWithImage, setCharListWithImage] = useState<any[]>([]);
+  let favoriteList: CharacterFavorites[] | null = null;
 
   useEffect(() => {
     getCharactersWithImage();
   }, []);
 
-  const getCharactersWithImage = async () => {
-    let response = await retrieveCharacterImageList();
+  const getFavoritesFromLocal = (): void => {
+    const favs = getLocalStorageItem(FAV_KEY);
+    if (favs) {
+      favoriteList = JSON.parse(favs);
+    } else {
+      favoriteList = null;
+    }
+  };
 
+  const getCharactersWithImage = async () => {
+    getFavoritesFromLocal();
+    let response = await retrieveCharacterImageList();
     if (response) {
-      let result = response.map((char: CharacterWithImage) => {
-        return {
-          ...char,
-          isFavorite: false,
-        };
-      });
+      let result;
+      if (favoriteList) {
+        result = response.map((char: any) => {
+          let favorites = favoriteList?.filter(
+            (item: CharacterFavorites) => item.name === char.name
+          );
+          return {
+            ...char,
+            isFavorite: favorites ? favorites[0]?.isFavorite : false,
+          };
+        });
+      } else {
+        result = response.map((char: any) => {
+          return {
+            ...char,
+            isFavorite: false,
+          };
+        });
+      }
       setCharListWithImage(result);
     }
   };

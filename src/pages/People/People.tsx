@@ -25,7 +25,13 @@ import { LoadingCard } from "../../components/Card/LoadingCard";
 import { CharacterListContext } from "../../App";
 import { useLocation } from "react-router-dom";
 import { CharacterWithImage, StarWarCharacters } from "../../utils/interface";
-import { LOAD_MORE, PLACEHOLDER_IMAGE, SCROLL_TOP } from "../../constants";
+import {
+  LOAD_MORE,
+  NO_FAV_TEXT,
+  PLACEHOLDER_IMAGE,
+  PLACEHOLDER_SEARCH_TEXT,
+  SCROLL_TOP,
+} from "../../constants";
 
 const People = () => {
   const sourceReference = useRef(axios.CancelToken.source());
@@ -37,6 +43,7 @@ const People = () => {
   const charListWithImage = useContext(CharacterListContext);
   const params = new URLSearchParams(useLocation().search);
   const filter = params.get("filter");
+  const [noLoadMoreData, setNoLoadMoreData] = useState(false);
 
   useEffect(() => {
     setLoading(true);
@@ -70,6 +77,7 @@ const People = () => {
 
   const getCharacters = async (searchTerm: string | null = null) => {
     let response;
+    setLoading(true);
     if (searchTerm) {
       response = await retrieveSearchedCharacters(searchTerm);
     } else {
@@ -112,7 +120,15 @@ const People = () => {
       setPage(response.next);
       let result = await mapCharactersWithImage(response.results);
       if (result) {
+        if (filter) {
+          result = result?.filter((item: any) => {
+            return item.isFavorite === true;
+          });
+        }
         setCharacterList([...characterList, ...result]);
+        if (result.length === 0) {
+          setNoLoadMoreData(true);
+        }
         setIsLoadMore(false);
       }
     }
@@ -138,26 +154,30 @@ const People = () => {
               Welcome to the Star Wars Universe!
             </Text>
           </Box>
-          <InputGroup display={{ base: "none", md: "block" }} w={"30%"}>
+          {!filter && (
+            <InputGroup display={{ base: "none", md: "block" }} w={"30%"}>
+              <Input
+                placeholder={PLACEHOLDER_SEARCH_TEXT}
+                variant="flushed"
+                className="sw-search"
+                onKeyDown={handleOnInput}
+              />
+              <InputRightElement children={<FiSearch />} />
+            </InputGroup>
+          )}
+        </Flex>
+
+        {!filter && (
+          <InputGroup mt={4} display={{ base: "block", md: "none" }} w={"95 %"}>
             <Input
-              placeholder="Search character name"
+              placeholder={PLACEHOLDER_SEARCH_TEXT}
               variant="flushed"
               className="sw-search"
               onKeyDown={handleOnInput}
             />
             <InputRightElement children={<FiSearch />} />
           </InputGroup>
-        </Flex>
-
-        <InputGroup mt={4} display={{ base: "block", md: "none" }} w={"95 %"}>
-          <Input
-            placeholder="Search character name"
-            variant="flushed"
-            className="sw-search"
-            onKeyDown={handleOnInput}
-          />
-          <InputRightElement children={<FiSearch />} />
-        </InputGroup>
+        )}
       </Heading>
       {isLoading ? (
         <Flex
@@ -177,20 +197,24 @@ const People = () => {
       ) : (
         <>
           {characterList.length === 0 && filter && (
-            <Heading w={"100%"} textAlign={"center"} mt={"20vh"}>
-              Coming soon...
-            </Heading>
+            <Text w={"100%"} textAlign={"center"} mt={"20vh"}>
+              {NO_FAV_TEXT}
+            </Text>
           )}
 
           <Wrap spacing={"40px"} p={"12"} align="center" justify={"center"}>
             {characterList.map((character, index) => (
               <WrapItem key={index}>
-                <Card character={character} />
+                <Card
+                  character={character}
+                  characterList={characterList}
+                  setCharacterList={setCharacterList}
+                />
               </WrapItem>
             ))}
             {isLoadMore && <LoadingCard />}
           </Wrap>
-          {!(characterList.length < 10) && (
+          {characterList.length !== 0 && !noLoadMoreData && (
             <Flex justifyContent={"center"} alignItems={"center"} mb={8}>
               {characterList.length < 82 ? (
                 <Button

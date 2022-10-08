@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   Box,
   Image,
@@ -10,6 +10,8 @@ import {
   Tag,
   Wrap,
   WrapItem,
+  Button,
+  IconButton,
 } from "@chakra-ui/react";
 import {
   getFilmsAndStarshipData,
@@ -17,11 +19,22 @@ import {
 } from "../../helper/retrieveCharactersData";
 import { CharacterListContext } from "../../App";
 import { GiHastyGrave, GiNewBorn, GiWorld } from "react-icons/gi";
-import { StarWarCharacters } from "../../utils/interface";
-import { FILMS, PLACEHOLDER_IMAGE, STARSHIPS } from "../../constants";
+import { CharacterFavorites, StarWarCharacters } from "../../utils/interface";
+import {
+  ADD_TO_FAVORITES,
+  FAV_KEY,
+  FILMS,
+  PLACEHOLDER_IMAGE,
+  REMOVE_FROM_FAVORITES,
+  STARSHIPS,
+} from "../../constants";
+import { getLocalStorageItem, setLocalStorageItem } from "../../utils/common";
+import { FiHeart } from "react-icons/fi";
+import { FaArrowLeft } from "react-icons/fa";
 
 const CharacterDetails = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const profileId = location.pathname.split("/").pop();
   const [charDetails, setCharDetails] = useState<StarWarCharacters[]>([]);
   const [charImage, setCharImage] = useState("");
@@ -37,12 +50,34 @@ const CharacterDetails = () => {
   const charListWithImage = useContext(CharacterListContext);
   const [charFilms, setCharFilms] = useState<string[]>([]);
   const [charStarships, setCharStarships] = useState<string[]>([]);
+  const [isFavorite, setIsFavorite] = useState(false);
 
   useEffect(() => {
     if (charListWithImage) {
       getCharacterDetails();
+      getCharFavDetails();
     }
   }, [charListWithImage]);
+
+  const getFavListFromLocal = (): CharacterFavorites[] => {
+    const favListString = getLocalStorageItem(FAV_KEY);
+    let favList: CharacterFavorites[];
+    const defaultValue = [{ name: charDetails[0]?.name, isFavorite: false }];
+    if (favListString) {
+      favList = JSON.parse(favListString);
+      const characterFavDetails = favList.filter(
+        (favItem: CharacterFavorites) => favItem?.name === charDetails[0]?.name
+      );
+      return characterFavDetails || defaultValue;
+    } else {
+      return defaultValue;
+    }
+  };
+
+  const getCharFavDetails = (): void => {
+    let favList = getFavListFromLocal();
+    setIsFavorite(favList[0]?.isFavorite);
+  };
 
   const extractFilmsOrStarship = (
     groupResponseData: any,
@@ -99,10 +134,49 @@ const CharacterDetails = () => {
       setCharDetails([data]);
     }
   };
+  const setOrRemoveFavorite = (isFavorite: boolean): void => {
+    const favListString = getLocalStorageItem(FAV_KEY);
+    let favList: CharacterFavorites[];
+    if (favListString) {
+      favList = JSON.parse(favListString);
+      let existCharName = favList.filter(
+        (listItem: CharacterFavorites) => listItem.name === charDetails[0].name
+      );
+      if (existCharName.length > 0) {
+        favList = favList.map((listItem: CharacterFavorites) => {
+          if (listItem.name === charDetails[0].name) {
+            listItem.isFavorite = isFavorite;
+          }
+          return listItem;
+        });
+      } else {
+        favList.push({
+          name: charDetails[0].name,
+          isFavorite: isFavorite,
+        });
+      }
+      setLocalStorageItem(FAV_KEY, JSON.stringify(favList));
+    }
+  };
+
+  const handleAddFavorites = (_event: any) => {
+    setOrRemoveFavorite(true);
+    setIsFavorite(true);
+  };
+
+  const handleRemoveFavorites = (_event: any) => {
+    setOrRemoveFavorite(false);
+    setIsFavorite(false);
+  };
+
+  const goBack = (_event: any) => {
+    navigate(-1);
+  };
 
   return (
     <Flex gap={0.5} flexDirection={"column"}>
       <Box
+        position={"relative"}
         w={"90%"}
         h={40}
         bg={useColorModeValue("white", "black")}
@@ -111,13 +185,50 @@ const CharacterDetails = () => {
         borderRadius={10}
         className="shimmering-gradient"
       >
+        <IconButton
+          position={"absolute"}
+          top={4}
+          left={4}
+          isRound={true}
+          size={"lg"}
+          icon={<FaArrowLeft />}
+          onClick={goBack}
+          aria-label={"back-button"}
+        />
         <Text fontSize={"lg"} fontWeight={"thin"} textAlign="center" mt={4}>
           Star Wars Character Profile
         </Text>
+        <Box position={"absolute"} right={4} bottom={4}>
+          {isFavorite ? (
+            <Button
+              alignSelf={"flex-end"}
+              colorScheme="yellow"
+              variant={"outline"}
+              size="sm"
+              fontWeight={"medium"}
+              onClick={handleRemoveFavorites}
+            >
+              {REMOVE_FROM_FAVORITES}
+              <FiHeart fill={"red"} color="red" style={{ marginLeft: 8 }} />
+            </Button>
+          ) : (
+            <Button
+              alignSelf={"flex-end"}
+              colorScheme="yellow"
+              variant={"outline"}
+              size="sm"
+              fontWeight={"medium"}
+              onClick={handleAddFavorites}
+            >
+              {ADD_TO_FAVORITES}
+              <FiHeart style={{ marginLeft: 8 }} />
+            </Button>
+          )}
+        </Box>
         <Image
           src={charImage || PLACEHOLDER_IMAGE}
           boxSize="150px"
-          alt="stock image"
+          alt="Profile"
           borderRadius="full"
           m={"15px auto"}
           boxShadow={"lg"}
