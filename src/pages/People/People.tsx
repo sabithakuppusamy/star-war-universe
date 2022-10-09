@@ -28,6 +28,7 @@ import { useLocation } from "react-router-dom";
 import { CharacterWithImage, StarWarCharacters } from "../../utils/interface";
 import {
   LOAD_MORE,
+  NO_CHARACTERS_TEXT,
   NO_FAV_TEXT,
   PLACEHOLDER_IMAGE,
   PLACEHOLDER_SEARCH_TEXT,
@@ -207,9 +208,9 @@ const People = () => {
         </Flex>
       ) : (
         <>
-          {characterList.length === 0 && filter && (
+          {characterList.length === 0 && (
             <Text w={"100%"} textAlign={"center"} mt={"20vh"}>
-              {NO_FAV_TEXT}
+              {filter ? NO_FAV_TEXT : NO_CHARACTERS_TEXT}
             </Text>
           )}
 
